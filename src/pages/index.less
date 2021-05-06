@@ -1,0 +1,33 @@
+.wrapper{
+  padding: 24px;
+  height: 100%;
+  display: flex;
+  background-color: #f0f0f0;
+  .splitPane{
+    :global{
+      .Pane1{
+        padding-left: 24px;
+      }
+      .Pane2{
+        padding-right: 24px;
+      }
+    }
+    .leftToolBar{
+      min-width: 200px;
+      height: 100%;
+      background-color: white;
+      margin-right: 24px;
+      box-shadow: 10px 5px 5px #eee;
+      padding: 12px;
+    }
+    .rightContainer{
+      flex: 1;
+      height: 100%;
+      min-width: 700px;
+      background-color: white;
+      box-shadow: 10px 5px 5px #eee;
+      padding: 12px;
+    }
+  }
+
+}
