@@ -2,6 +2,7 @@ import React from "react";
 import {QuestionCircleOutlined, PlusOutlined, MinusCircleOutlined} from '@ant-design/icons'
 import {Form, Input, Checkbox, Button, Select} from 'antd'
 import styles from './styles.less'
+import {CONTROL_TYPE} from '@/utils/enum'
 
 const optionConfigs = [
   {label: '必填', value: 'required'},
@@ -10,11 +11,11 @@ const optionConfigs = [
 
 function getLabel(type) {
   switch (type) {
-    case 'radio':
+    case CONTROL_TYPE.radio:
       return "单选"
-    case 'input':
+    case CONTROL_TYPE.input:
       return "单行文本"
-    case 'checkbox':
+    case CONTROL_TYPE.checkbox:
       return "多选"
     default:
       return null
@@ -38,14 +39,14 @@ const formItemLayoutWithOutLabel = {
   },
 };
 
-const Index = ({editor,onConfirm}) => {
+const Index = ({editor, onConfirm,onCancel}) => {
   const {type, options} = editor
   const onChange = (checkedValues) => {
     console.log('checked = ', checkedValues);
   }
 
   const onReset = () => {
-
+    onCancel(editor)
   }
 
   const onFinish = (values) => {

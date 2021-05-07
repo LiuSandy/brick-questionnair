@@ -1,15 +1,26 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {produce} from 'immer'
 import Content from "./Content";
 import Editor from "./Editor";
-import {Button, Form} from "antd";
+import {Button, Form, notification} from "antd";
+import PubSub from "pubsub-js";
 import {uuid} from '../utils'
+import {PUBSUB_TYPE} from '@/utils/enum'
 
 const Index = props => {
 
   const [editors, setEditors] = useState([])
 
-  const addEditor = type => {
+  const finishEditors = editors.filter(item => !item.isEditor)
+  const editorConfigs = editors.filter(item => item.isEditor)
+
+  const addEditor = (msg, type) => {
+    if (editorConfigs.length > 0) {
+      notification.warning({
+        message: '已经存在编辑内容',
+      })
+      return
+    }
     const editor = {
       key: uuid(),
       type: type, // 类型  radio | checkbox | input | textarea | select
@@ -25,18 +36,27 @@ const Index = props => {
         maxLength: 50, //单行文本限制的字数
       }
     }
-    setEditors([...editors, editor])
+    setEditors(prevState => {
+      console.log("prevState", prevState)
+      return prevState.concat(editor)
+    })
   }
 
-  const onConfirm = editor =>{
-    const newEditors = produce(editors,draftState=>{
-      draftState.forEach((draft,index)=>{
-        if (draft.key===editor.key){
+  /* 编辑保存 */
+  const onConfirm = editor => {
+    const newEditors = produce(editors, draftState => {
+      draftState.forEach((draft, index) => {
+        if (draft.key === editor.key) {
           draftState[index] = editor
         }
       })
       return draftState
     })
+    setEditors(newEditors)
+  }
+  /* 编辑取消 */
+  const onCancel = editor=>{
+    const newEditors = editors.filter(item=>item.key !== editor.key)
     setEditors(newEditors)
   }
 
@@ -48,12 +68,15 @@ const Index = props => {
     console.log('Failed:', errorInfo);
   };
 
-  const finishEditors = editors.filter(item => !item.isEditor)
-  const editorConfigs = editors.filter(item => item.isEditor)
+  useEffect(() => {
+    PubSub.subscribe(PUBSUB_TYPE.addEditor, addEditor)
+    return () => {
+      PubSub.unsubscribe(PUBSUB_TYPE.addEditor, addEditor)
+    }
+  }, [])
 
   return (
     <>
-      <Button onClick={() => addEditor("radio")}>Add</Button>
       <Form
         name="basic"
         layout='vertical'
@@ -71,7 +94,7 @@ const Index = props => {
         </Form.Item>}
       </Form>
       {editorConfigs.map(editor => (
-        <Editor onConfirm={onConfirm} key={editor.key} editor={editor}/>
+        <Editor onCancel={onCancel} onConfirm={onConfirm} key={editor.key} editor={editor}/>
       ))}
     </>
   )

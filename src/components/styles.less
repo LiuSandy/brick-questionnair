@@ -6,7 +6,30 @@
   font-size: 24px;
   cursor: pointer;
   transition: all 0.3s;
-  &:hover{
+
+  &:hover {
     color: #777;
+  }
+}
+
+.sliderTool {
+  > * {
+    margin-bottom: 12px;
+  }
+  :global {
+    .ant-card {
+      &:hover{
+        box-shadow: 10px 5px 5px #eee;
+      }
+      .ant-card-body {
+        padding: 12px;
+        cursor: pointer;
+        font-size: 16px;
+        > * {
+          margin-right: 6px;
+        }
+      }
+    }
+
   }
 }
