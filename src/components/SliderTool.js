@@ -1,5 +1,10 @@
 import React from "react";
-import {TableOutlined, CheckSquareOutlined, CheckCircleOutlined} from '@ant-design/icons'
+import {
+  TableOutlined,
+  CheckSquareOutlined,
+  CheckCircleOutlined,
+  BorderOutlined
+} from '@ant-design/icons'
 import {Card} from "antd";
 import PubSub from 'pubsub-js'
 import styles from './styles.less'
@@ -15,6 +20,10 @@ const data = [
     type: CONTROL_TYPE.checkbox,
     title: '多选',
     icon: <CheckSquareOutlined/>
+  }, {
+    type: CONTROL_TYPE.input,
+    title: '单行输入',
+    icon: <BorderOutlined/>
   }, {
     type: CONTROL_TYPE.table,
     title: '表格',
