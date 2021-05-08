@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ReactDom from "react-dom";
 import styles from "./table.less";
-import { Button, Checkbox, Radio } from "antd";
+import { Button, Checkbox, Popover, Radio } from "antd";
 
 const data = [
   ["列1", "列2", "列3"],
@@ -10,7 +10,12 @@ const data = [
   ["", "", ""],
 ];
 
-const RadioNode = () => <Radio>Radio</Radio>;
+const RadioNode = () => (
+  <div>
+    <input type="radio" id="huey" name="drone" value="huey" />
+    <label for="huey">huey</label>
+  </div>
+);
 const CheckBoxNode = () => {
   const onChange = (e) => {
     console.log(`checked = ${e.target.checked}`);
@@ -45,7 +50,7 @@ const Index = (props) => {
   /* 插入单选 */
   const insertRadio = () => {
     let testDiv = document.createElement("div");
-    ReactDom.render(<CheckBoxNode />, testDiv);
+    ReactDom.render(<RadioNode />, testDiv);
     const selectHtml = testDiv.innerHTML;
     document.execCommand("insertHtml", false, selectHtml);
   };
@@ -64,6 +69,14 @@ const Index = (props) => {
       <Button onClick={addColumn}>新增一列</Button>
       <Button onClick={addRow}>新增一行</Button>
       <Button onClick={insertRadio}>插入单选</Button>
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
       <br />
       <br />
       <br />
