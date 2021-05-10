@@ -7,13 +7,16 @@ import { deepClone, lastRight } from "@/utils";
 import { TABLE_CHECKBOX_OPTION } from "@/utils/enum";
 
 /* 渲染单元格 */
-const RenderCell = ({ renderType, label, index }) => {
+const RenderCell = ({ identify, renderType, label, index }) => {
   if (renderType === COLUMN_CONFIG.describe) {
     return label;
   }
   if (renderType === COLUMN_CONFIG.option) {
     return (
-      <Form.Item name={`${label}##${index}`} valuePropName="checked">
+      <Form.Item
+        name={[identify, `${label}##${index}`]}
+        valuePropName="checked"
+      >
         <Checkbox>{label}</Checkbox>
       </Form.Item>
     );
@@ -129,7 +132,6 @@ const Index = (props) => {
   };
 
   const { columns = [], rows = [], columnConfig } = editor?.tableCheckbox || {};
-  console.log("->>", editor);
   return (
     <div>
       <Descriptions title={editor.label}>
@@ -148,6 +150,7 @@ const Index = (props) => {
                   {item.map((value, i) => (
                     <td key={i}>
                       <RenderCell
+                        identify={editor.key}
                         label={value}
                         index={`${index + 1}-${i}`}
                         renderType={columnConfig[i]}
@@ -164,6 +167,17 @@ const Index = (props) => {
       {editor.isEditor && (
         <div className={styles.configPanel}>
           <Descriptions column={1} title="配置" bordered>
+            <Descriptions.Item label="描述">
+              <Input
+                value={editor.label}
+                onChange={(e) => {
+                  setEditor({
+                    ...editor,
+                    label: e.target.value,
+                  });
+                }}
+              />
+            </Descriptions.Item>
             <Descriptions.Item label="行标题">
               <TextArea type="row" data={rows} onConfirm={onConfirm} />
             </Descriptions.Item>

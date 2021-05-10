@@ -7,6 +7,7 @@ import {
 import { Form, Input, Checkbox, Button, Select } from "antd";
 import Table from "./table";
 import TableCheckbox from "./tableCheckbox";
+import FormLinkage from "./FormLinkage";
 import styles from "./styles.less";
 import { CONTROL_TYPE, NEED_CONFIG_OPTIONS } from "@/utils/enum";
 
@@ -86,6 +87,12 @@ const Index = ({ editor, onConfirm, onCancel }) => {
         onCancel={onCancel}
         onConfirm={onConfirm}
       />
+    );
+  }
+
+  if (editor.type === CONTROL_TYPE.formLinkage) {
+    return (
+      <FormLinkage editor={editor} onCancel={onCancel} onConfirm={onConfirm} />
     );
   }
 

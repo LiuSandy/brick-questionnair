@@ -5,7 +5,7 @@ import Editor from "./Editor";
 import { Button, Form, notification } from "antd";
 import PubSub from "pubsub-js";
 import { uuid } from "../utils";
-import { PUBSUB_TYPE, CONTROL_TYPE, TABLE_CHECKBOX_OPTION } from "@/utils/enum";
+import { PUBSUB_TYPE, CONTROL_TYPE, TABLE_CHECKBOX_OPTION,FORM_LINKAGE_OPTION } from "@/utils/enum";
 
 const Index = (props) => {
   const [editors, setEditors] = useState([]);
@@ -46,6 +46,8 @@ const Index = (props) => {
     };
     if (type === CONTROL_TYPE.tableCheckbox) {
       editor.tableCheckbox = TABLE_CHECKBOX_OPTION;
+    } else if (type === CONTROL_TYPE.formLinkage){
+      editor.formLinkage = FORM_LINKAGE_OPTION;
     } else {
       editor = {
         ...editor,

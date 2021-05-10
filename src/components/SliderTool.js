@@ -5,13 +5,14 @@ import {
   CheckCircleOutlined,
   BorderOutlined,
   AppstoreAddOutlined,
+  FormOutlined,
 } from "@ant-design/icons";
 import { Card } from "antd";
 import PubSub from "pubsub-js";
 import styles from "./styles.less";
 import { CONTROL_TYPE, PUBSUB_TYPE } from "@/utils/enum";
 
-const data = [
+export const data = [
   {
     type: CONTROL_TYPE.radio,
     title: "单选",
@@ -36,6 +37,11 @@ const data = [
     type: CONTROL_TYPE.tableCheckbox,
     title: "表格选项",
     icon: <AppstoreAddOutlined />,
+  },
+  {
+    type: CONTROL_TYPE.formLinkage,
+    title: "表单联动",
+    icon: <FormOutlined />,
   },
 ];
 
