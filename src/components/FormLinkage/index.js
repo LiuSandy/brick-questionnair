@@ -20,7 +20,7 @@ import { CONTROL_TYPE } from "../../utils/enum";
 
 const Content = ({ option, onTypeChange }) => {
   const [visible, setVisible] = useState(option.isRelation);
-  console.log(option);
+
   const handleChange = (e) => {
     onTypeChange(e);
   };

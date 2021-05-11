@@ -2,10 +2,19 @@ import React, { useEffect, useState } from "react";
 import { produce } from "immer";
 import Content from "./Content";
 import Editor from "./Editor";
+import Toolbar from "./Toolbar";
 import { Button, Form, notification } from "antd";
 import PubSub from "pubsub-js";
+import { onEditEditors } from "./_tool";
 import { uuid } from "../utils";
-import { PUBSUB_TYPE, CONTROL_TYPE, TABLE_CHECKBOX_OPTION,FORM_LINKAGE_OPTION } from "@/utils/enum";
+import {
+  PUBSUB_TYPE,
+  CONTROL_TYPE,
+  TABLE_CHECKBOX_OPTION,
+  FORM_LINKAGE_OPTION,
+  EDIT_TYPE,
+} from "@/utils/enum";
+import styles from "./styles.less";
 
 const Index = (props) => {
   const [editors, setEditors] = useState([]);
@@ -46,7 +55,7 @@ const Index = (props) => {
     };
     if (type === CONTROL_TYPE.tableCheckbox) {
       editor.tableCheckbox = TABLE_CHECKBOX_OPTION;
-    } else if (type === CONTROL_TYPE.formLinkage){
+    } else if (type === CONTROL_TYPE.formLinkage) {
       editor.formLinkage = FORM_LINKAGE_OPTION;
     } else {
       editor = {
@@ -65,6 +74,17 @@ const Index = (props) => {
       };
     }
     setEditors(editors.concat(editor));
+  };
+
+  const onToolClick = (type, editor) => {
+    if (type === EDIT_TYPE.edit && editorConfigs.length > 0) {
+      notification.warning({
+        message: "已经存在编辑内容",
+      });
+      return;
+    }
+    const newEditors = onEditEditors(editors, type, editor);
+    setEditors(newEditors);
   };
 
   const onFinish = (values) => {
@@ -92,7 +112,10 @@ const Index = (props) => {
         onFinishFailed={onFinishFailed}
       >
         {finishEditors.map((editor) => (
-          <Content key={editor.key} editor={editor} />
+          <div key={editor.key} className={styles.content}>
+            <Content editor={editor} />
+            <Toolbar onToolClick={(type) => onToolClick(type, editor)} />
+          </div>
         ))}
         {editorConfigs.length === 0 && editors.length > 0 && (
           <Form.Item>

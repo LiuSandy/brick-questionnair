@@ -52,3 +52,13 @@ export const FORM_LINKAGE_OPTION = {
     },
   },
 };
+
+export const EDIT_TYPE = {
+  edit: "EDIT",
+  copy: "COPY",
+  delete: "DELETE",
+  up_one: "UP_ONE",
+  down_one: "DOWN_ONE",
+  up_first: "UP_FIRST",
+  down_first: "DOWN_FIRST",
+};
