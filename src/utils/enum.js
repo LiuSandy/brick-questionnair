@@ -2,11 +2,13 @@
 export const CONTROL_TYPE = {
   radio: "RADIO",
   checkbox: "CHECKBOX",
+  select: "SELECT",
   input: "INPUT",
   textarea: "TEXTAREA",
   table: "TABLE",
   tableCheckbox: "TABLE_CHECKBOX",
   formLinkage: "FORM_LINKAGE",
+  completion: "COMPLETION",
 };
 
 /* 发布订阅类型 */
@@ -34,9 +36,10 @@ export const TABLE_CHECKBOX_OPTION = {
     1: COLUMN_CONFIG.option,
     2: COLUMN_CONFIG.option,
     3: COLUMN_CONFIG.option,
-  } /* 默认第一列为描述，其他为选项，新增列负责上一列属性 */,
+  } /* 默认第一列为描述，其他为选项，新增列复制上一列属性 */,
 };
 
+/* 表单联动 */
 export const FORM_LINKAGE_OPTION = {
   options: ["yes", "no"],
   relation: {
@@ -51,6 +54,14 @@ export const FORM_LINKAGE_OPTION = {
       isRelation: false,
     },
   },
+};
+/* Completion 填空题 */
+export const COMPLETION_OPTION = {
+  describe: "填空1____填空2____",
+  attributes: [
+    { type: CONTROL_TYPE.input },
+    { type: CONTROL_TYPE.select, options: ["选项1", "选项2"] },
+  ],
 };
 
 export const EDIT_TYPE = {

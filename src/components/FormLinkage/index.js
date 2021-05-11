@@ -16,6 +16,8 @@ import {
 } from "antd";
 import styles from "../styles.less";
 import produce from "immer";
+import SimpleControl from '../SimpleControl'
+import ControlSelect from '../ControlSelect'
 import { CONTROL_TYPE } from "../../utils/enum";
 
 const Content = ({ option, onTypeChange }) => {
@@ -39,16 +41,7 @@ const Content = ({ option, onTypeChange }) => {
       {visible && (
         <Space>
           <span>请选择关联类型</span>
-          <Select
-            defaultValue={option.type}
-            style={{ width: 120 }}
-            onChange={handleChange}
-          >
-            <Select.Option value={CONTROL_TYPE.input}>Input</Select.Option>
-            <Select.Option value={CONTROL_TYPE.textarea}>
-              TextArea
-            </Select.Option>
-          </Select>
+          <ControlSelect option={option} onTypeChange={handleChange} />
         </Space>
       )}
     </div>
@@ -75,21 +68,6 @@ const ListItem = ({ option, item, onValueChange, onTypeChange }) => {
       </Space>
     </List.Item>
   );
-};
-
-const SimpleControl = ({ type, value, onChange }) => {
-  if (type === CONTROL_TYPE.input) {
-    return <Input value={value} onChange={(e) => onChange(e.target.value)} />;
-  }
-  if (type === CONTROL_TYPE.textarea) {
-    return (
-      <Input.TextArea
-        row={3}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      />
-    );
-  }
 };
 
 const Index = (props) => {
@@ -147,9 +125,10 @@ const Index = (props) => {
       });
     });
   };
+
   const { options = [], relation = {} } = editor.formLinkage || {};
   return (
-    <div>
+    <>
       <div>
         <Form.Item
           wrapperCol={{ span: 24 }}
@@ -170,7 +149,7 @@ const Index = (props) => {
           if (visible) {
             return (
               <Form.Item key={key} name={label} rules={[{ required: true }]}>
-                <SimpleControl type={type} />
+                <SimpleControl type={type} config={relation[key]} />
               </Form.Item>
             );
           }
@@ -228,7 +207,7 @@ const Index = (props) => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

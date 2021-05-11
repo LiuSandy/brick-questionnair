@@ -3,6 +3,7 @@ import { produce } from "immer";
 import Content from "./Content";
 import Editor from "./Editor";
 import Toolbar from "./Toolbar";
+import Title from "./title";
 import { Button, Form, notification } from "antd";
 import PubSub from "pubsub-js";
 import { onEditEditors } from "./_tool";
@@ -15,6 +16,7 @@ import {
   EDIT_TYPE,
 } from "@/utils/enum";
 import styles from "./styles.less";
+import { COMPLETION_OPTION } from "../utils/enum";
 
 const Index = (props) => {
   const [editors, setEditors] = useState([]);
@@ -57,6 +59,8 @@ const Index = (props) => {
       editor.tableCheckbox = TABLE_CHECKBOX_OPTION;
     } else if (type === CONTROL_TYPE.formLinkage) {
       editor.formLinkage = FORM_LINKAGE_OPTION;
+    } else if (type === CONTROL_TYPE.completion) {
+      editor.completion = COMPLETION_OPTION;
     } else {
       editor = {
         ...editor,
@@ -110,29 +114,37 @@ const Index = (props) => {
         initialValues={{ remember: true }}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
+        className={styles.container}
       >
-        {finishEditors.map((editor) => (
-          <div key={editor.key} className={styles.content}>
-            <Content editor={editor} />
-            <Toolbar onToolClick={(type) => onToolClick(type, editor)} />
-          </div>
-        ))}
+        <div className={styles.questionWrapper}>
+          <Title />
+          {finishEditors.map((editor) => (
+            <div key={editor.key} className={styles.content}>
+              <Content editor={editor} />
+              <Toolbar onToolClick={(type) => onToolClick(type, editor)} />
+            </div>
+          ))}
+        </div>
+
         {editorConfigs.length === 0 && editors.length > 0 && (
-          <Form.Item>
+          <Form.Item className={styles.submit}>
             <Button type="primary" htmlType="submit">
               Submit
             </Button>
           </Form.Item>
         )}
       </Form>
-      {editorConfigs.map((editor) => (
-        <Editor
-          onCancel={onCancel}
-          onConfirm={onConfirm}
-          key={editor.key}
-          editor={editor}
-        />
-      ))}
+      <div className={styles.editWrapper}>
+        {editorConfigs.map((editor) => (
+          <Editor
+            onCancel={onCancel}
+            onConfirm={onConfirm}
+            key={editor.key}
+            editor={editor}
+          />
+        ))}
+      </div>
+
     </>
   );
 };

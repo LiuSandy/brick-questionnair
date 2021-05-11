@@ -6,6 +6,7 @@ import {
   BorderOutlined,
   AppstoreAddOutlined,
   FormOutlined,
+  FontColorsOutlined
 } from "@ant-design/icons";
 import { Card } from "antd";
 import PubSub from "pubsub-js";
@@ -42,6 +43,10 @@ export const data = [
     type: CONTROL_TYPE.formLinkage,
     title: "表单联动",
     icon: <FormOutlined />,
+  },{
+    type: CONTROL_TYPE.completion,
+    title: "填空题",
+    icon: <FontColorsOutlined />,
   },
 ];
 
