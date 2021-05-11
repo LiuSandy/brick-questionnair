@@ -6,9 +6,11 @@ import reset from "@/pages/reset.less";
 import styles from "../styles.less";
 import SimpleControl from "../SimpleControl";
 import ControlSelect from "../ControlSelect";
+import DataDictionary from "../DataDictionary";
 import { Button, Descriptions, Input, Form } from "antd";
 import produce from "immer";
 import { CONTROL_TYPE } from "../../utils/enum";
+import { compact, lastRight } from "../../utils";
 
 const Index = (props) => {
   const [editor, setEditor] = useState("");
@@ -27,31 +29,45 @@ const Index = (props) => {
   const insertCompletion = () => {
     const newEditor = produce(editor, (draftState) => {
       const { describe = "", attributes = [] } = draftState.completion;
-      draftState.completion.describe = `${describe}____`;
-      draftState.completion.attributes = [
-        ...attributes,
-        { type: CONTROL_TYPE.input },
-      ];
+      const lastLabels = lastRight(describe.split("____"));
+      if (lastLabels !== "") {
+        draftState.completion.describe = `${describe}____`;
+        draftState.completion.attributes = [
+          ...attributes,
+          { type: CONTROL_TYPE.input },
+        ];
+      }
     });
     setEditor(newEditor);
   };
 
   const onTypeChange = (type, index) => {
-    const options = null;
     const newEditor = produce(editor, (draftState) => {
       const { attributes = [] } = draftState.completion || {};
       const attribute = attributes[index];
       attributes[index] = {
         ...attribute,
         type,
-        options: options || ["选项1", "选项2"],
+        options: ["选项1", "选项2"],
+      };
+    });
+    setEditor(newEditor);
+  };
+
+  const onDictSelect = (options, index) => {
+    const newEditor = produce(editor, (draftState) => {
+      const { attributes = [] } = draftState.completion || {};
+      const attribute = attributes[index];
+      attributes[index] = {
+        ...attribute,
+        options,
       };
     });
     setEditor(newEditor);
   };
 
   const { describe = "", attributes = [] } = editor.completion || {};
-  const labels = describe.split("____");
+  const labels = compact(describe.split("____"));
   return (
     <>
       <div className={reset.completion}>
@@ -89,6 +105,7 @@ const Index = (props) => {
                   <tr>
                     <th>填空</th>
                     <th>控件</th>
+                    <th>属性</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -100,6 +117,15 @@ const Index = (props) => {
                           option={attribute}
                           onTypeChange={(type) => onTypeChange(type, index)}
                         />
+                      </td>
+
+                      <td>
+                        {attribute.type === CONTROL_TYPE.select && (
+                          <DataDictionary
+                            value={attribute.optionKey}
+                            onSelect={(v) => onDictSelect(v, index)}
+                          />
+                        )}
                       </td>
                     </tr>
                   ))}
