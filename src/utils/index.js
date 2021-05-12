@@ -37,6 +37,23 @@ export function compact(data) {
   return data.filter((item) => !!item);
 }
 
-export function lastRight(data=[]){
-  return data[data.length-1]
+export function lastRight(data = []) {
+  return data[data.length - 1];
+}
+
+/**
+ * 比较两个字符串的不同
+ * @param oldStr
+ * @param newStr
+ */
+export function diff(oldStr, newStr) {
+  let index = 0;
+  for (let i = 0; i < oldStr.length; i++) {
+    if (newStr[i] !== oldStr[i]) {
+      index = i;
+      break;
+    }
+    index = newStr.length - oldStr.length;
+  }
+  return index;
 }

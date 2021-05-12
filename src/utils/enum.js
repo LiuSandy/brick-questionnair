@@ -59,11 +59,12 @@ export const FORM_LINKAGE_OPTION = {
 export const COMPLETION_OPTION = {
   describe: "填空1____填空2____",
   attributes: [
-    { type: CONTROL_TYPE.input },
+    { type: CONTROL_TYPE.input, index: [3, 6] },
     {
       type: CONTROL_TYPE.select,
       options: ["选项1", "选项2"],
       optionKey: "字典1",
+      index: [10, 13],
     },
   ],
 };

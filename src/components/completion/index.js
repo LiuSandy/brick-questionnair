@@ -7,10 +7,10 @@ import styles from "../styles.less";
 import SimpleControl from "../SimpleControl";
 import ControlSelect from "../ControlSelect";
 import DataDictionary from "../DataDictionary";
-import { Button, Descriptions, Input, Form } from "antd";
+import { Button, Descriptions, Form, Input } from "antd";
 import produce from "immer";
 import { CONTROL_TYPE } from "../../utils/enum";
-import { compact, lastRight } from "../../utils";
+import { compact, diff, lastRight } from "../../utils";
 
 const Index = (props) => {
   const [editor, setEditor] = useState("");
@@ -20,12 +20,42 @@ const Index = (props) => {
   }, [props.editor]);
 
   const handleDescribe = (e) => {
-    const value = e.target.value;
-    const newEditor = produce(editor, (draftState) => {
-      draftState.completion.describe = value;
-    });
-    setEditor(newEditor);
+    const currentValue = e.target.value;
+    const { describe = "", attributes = [] } = editor.completion || {};
+    const changeDescribe = (value) => {
+      const newEditor = produce(editor, (draftState) => {
+        draftState.completion.describe = value;
+      });
+      setEditor(newEditor);
+    };
+    if (currentValue.length < describe.length) {
+      const diffIndex = diff(describe, currentValue);
+      const diffChart = describe[diffIndex];
+      if (diffChart === "_") {
+        const attributeIndex = attributes.findIndex(
+          (attribute) =>
+            diffIndex >= attribute.index[0] && diffIndex <= attribute.index[1]
+        );
+        const newEditor = produce(editor, (draftState) => {
+          // 1. 清空填空符
+          const { index } = attributes[attributeIndex];
+          const describeArr = describe.split("");
+          describeArr.splice(index[0], 4);
+          draftState.completion.describe = describeArr.join("");
+          // 2. 删除属性配置
+          draftState.completion.attributes = attributes.filter(
+            (attribute, index) => index !== attributeIndex
+          );
+        });
+        setEditor(newEditor);
+      } else {
+        changeDescribe(currentValue);
+      }
+    } else {
+      changeDescribe(currentValue);
+    }
   };
+
   const insertCompletion = () => {
     const newEditor = produce(editor, (draftState) => {
       const { describe = "", attributes = [] } = draftState.completion;
@@ -68,6 +98,7 @@ const Index = (props) => {
 
   const { describe = "", attributes = [] } = editor.completion || {};
   const labels = compact(describe.split("____"));
+
   return (
     <>
       <div className={reset.completion}>
