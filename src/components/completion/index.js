@@ -1,7 +1,7 @@
 /**
  * 填空题
  */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import reset from "@/pages/reset.less";
 import styles from "../styles.less";
 import SimpleControl from "../SimpleControl";
@@ -18,6 +18,8 @@ const Index = (props) => {
   useEffect(() => {
     setEditor(props.editor);
   }, [props.editor]);
+
+  const actionRef = useRef();
 
   const handleDescribe = (e) => {
     const currentValue = e.target.value;
@@ -56,18 +58,71 @@ const Index = (props) => {
     }
   };
 
+  const getNewDescribe = (cursorIndex, describe) => {
+    let newDescribe = describe;
+    if (cursorIndex >= describe.length) {
+      newDescribe = `${newDescribe}____`;
+    } else {
+      newDescribe = `${newDescribe.slice(
+        0,
+        cursorIndex
+      )}____${newDescribe.slice(cursorIndex)}`;
+    }
+    return newDescribe;
+  };
+
+  const getNewAttribute = (cursorIndex, attributes) => {
+    let attributeIndex = attributes.length;
+    for (let i = 0; i < attributes.length; i++) {
+      const { index } = attributes[i];
+      if (cursorIndex < index[0]) {
+        attributeIndex = i;
+      }
+    }
+    let newAttributes = attributes;
+    if (attributeIndex >= attributes.length) {
+      newAttributes = [
+        ...newAttributes,
+        {
+          type: CONTROL_TYPE.input,
+          index: [attributes.length, attributes.length + 4],
+        },
+      ];
+    } else {
+      newAttributes = [
+        ...newAttributes.slice(0, attributeIndex),
+        {
+          type: CONTROL_TYPE.input,
+          index: [cursorIndex, cursorIndex + 4],
+        },
+        ...newAttributes.slice(attributeIndex),
+      ];
+    }
+    return newAttributes;
+  };
+
+  // 非 IE 模式
   const insertCompletion = () => {
+    const instance = actionRef.current.resizableTextArea.textArea;
+    // 光标所在位置
+    const cursorIndex = instance.selectionStart;
     const newEditor = produce(editor, (draftState) => {
       const { describe = "", attributes = [] } = draftState.completion;
-      const lastLabels = lastRight(describe.split("____"));
-      if (lastLabels !== "") {
-        draftState.completion.describe = `${describe}____`;
-        draftState.completion.attributes = [
-          ...attributes,
-          { type: CONTROL_TYPE.input },
-        ];
+      const newDescribe = getNewDescribe(cursorIndex, describe);
+      const newAttributes = getNewAttribute(cursorIndex, attributes);
+
+      const prevChar = describe[cursorIndex - 1];
+      if (prevChar !== "" && prevChar !== "_") {
+        draftState.completion.describe = newDescribe;
+        draftState.completion.attributes = newAttributes;
+        // 更新光标位置
+        instance.focus();
+        setTimeout(() => {
+          instance.setSelectionRange(cursorIndex + 4, cursorIndex + 4);
+        }, 0);
       }
     });
+
     setEditor(newEditor);
   };
 
@@ -128,6 +183,7 @@ const Index = (props) => {
                 rows={3}
                 value={describe}
                 onChange={handleDescribe}
+                ref={actionRef}
               />
             </Descriptions.Item>
             <Descriptions.Item label="填空属性">
